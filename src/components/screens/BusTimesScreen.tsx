@@ -40,27 +40,54 @@ const BusTimesScreen: React.FC = () => {
       try {
         setLoading(true);
 
-        // Try to fetch real-time data from OVapi
-        // First try direct call, then fallback to proxy if CORS fails
+        // Try to fetch real-time data from OVapi with multiple fallback strategies
         let response;
+        let data;
+
         try {
-          response = await fetch('https://v0.ovapi.nl/stopareacode/amrasl/', {
-            mode: 'cors',
-          });
-        } catch (corsError) {
-          console.log('Direct API call failed due to CORS, trying proxy...');
+          // Strategy 1: Try nginx proxy (if configured on your server)
           response = await fetch('/api/ovapi/stopareacode/amrasl/');
+          if (response.ok) {
+            data = await response.json();
+          } else {
+            throw new Error('Nginx proxy not available');
+          }
+        } catch (error) {
+          console.log('Nginx proxy failed, trying direct API call...');
+          try {
+            // Strategy 2: Try direct API call
+            response = await fetch('https://v0.ovapi.nl/stopareacode/amrasl/', {
+              mode: 'cors',
+            });
+            if (response.ok) {
+              data = await response.json();
+            } else {
+              throw new Error('Direct API call failed');
+            }
+          } catch (directError) {
+            console.log('Direct API call failed, trying CORS proxy...');
+            try {
+              // Strategy 3: Use CORS proxy service
+              response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://v0.ovapi.nl/stopareacode/amrasl/'));
+              if (response.ok) {
+                const proxyData = await response.json();
+                data = JSON.parse(proxyData.contents);
+              } else {
+                throw new Error('CORS proxy failed');
+              }
+            } catch (proxyError) {
+              console.log('All API strategies failed, using fallback data');
+              throw new Error('All API calls failed');
+            }
+          }
         }
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch bus data');
-        }
-
-        const data: OVApiResponse = await response.json();
+        // Data should already be parsed from the strategies above
+        const apiData: OVApiResponse = data as OVApiResponse;
         const departures: BusDeparture[] = [];
 
         // Process all stops in the area
-        Object.values(data).forEach(stopArea => {
+        Object.values(apiData).forEach(stopArea => {
           Object.values(stopArea).forEach(stop => {
             if (stop.Passes) {
               Object.values(stop.Passes).forEach(pass => {
