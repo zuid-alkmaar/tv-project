@@ -10,4 +10,15 @@ export default defineConfig({
       },
     }),
   ],
+  server: {
+    proxy: {
+      // Proxy API requests to avoid CORS issues
+      '/api/ovapi': {
+        target: 'http://v0.ovapi.nl',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/ovapi/, ''),
+        secure: false,
+      },
+    },
+  },
 })

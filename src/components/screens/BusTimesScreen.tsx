@@ -40,11 +40,17 @@ const BusTimesScreen: React.FC = () => {
       try {
         setLoading(true);
 
-        // Fetch real-time data from OVapi for the configured bus stop
-        // Note: In production, you might need a CORS proxy or backend endpoint
-        const response = await fetch(config.transport.apiUrl, {
-          mode: 'cors',
-        });
+        // Try to fetch real-time data from OVapi
+        // First try direct call, then fallback to proxy if CORS fails
+        let response;
+        try {
+          response = await fetch('https://v0.ovapi.nl/stopareacode/amrasl/', {
+            mode: 'cors',
+          });
+        } catch (corsError) {
+          console.log('Direct API call failed due to CORS, trying proxy...');
+          response = await fetch('/api/ovapi/stopareacode/amrasl/');
+        }
 
         if (!response.ok) {
           throw new Error('Failed to fetch bus data');
