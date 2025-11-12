@@ -29,7 +29,7 @@ export const config = {
   // Slideshow Configuration
   slideshow: {
     // Duration each slide is shown (in milliseconds)
-    slideDuration: 15 * 1000, // 15 seconds
+    slideDuration: 9 * 1000, // 9 seconds
     // Fade transition duration (in milliseconds)
     fadeDuration: 500, // 0.5 seconds
   },

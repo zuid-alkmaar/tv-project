@@ -68,7 +68,7 @@ const WeatherScreen: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full text-white">
-        <div className="text-4xl">Loading weather...</div>
+        <div className="text-4xl animate-pulse text-violet-200">Het weer in Alkmaar laden...</div>
       </div>
     );
   }
@@ -76,7 +76,7 @@ const WeatherScreen: React.FC = () => {
   if (!weather) {
     return (
       <div className="flex items-center justify-center h-full text-white">
-        <div className="text-4xl">Weather data unavailable</div>
+        <div className="text-4xl text-gray-300">Weergegevens onbeschikbaar</div>
       </div>
     );
   }
@@ -85,34 +85,42 @@ const WeatherScreen: React.FC = () => {
     <div className="flex flex-col h-full text-white p-8">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-5xl font-bold mb-2">Weather in Alkmaar</h1>
-        <div className="text-2xl opacity-75">Current Conditions</div>
+        <h1 className="text-5xl font-bold mb-2 text-violet-100">Het weer in Alkmaar</h1>
+        <div className="text-2xl text-gray-300">Huidige weersomstandigheden</div>
       </div>
 
       {/* Current Weather */}
       <div className="flex items-center justify-center mb-12">
-        <div className="text-center">
-          <div className="text-8xl mb-4">{weather.current.icon}</div>
-          <div className="text-7xl font-bold mb-2">{weather.current.temperature}°C</div>
-          <div className="text-3xl opacity-90">{weather.current.description}</div>
-          <div className="flex gap-8 mt-6 text-xl">
-            <div>💧 {weather.current.humidity}%</div>
-            <div>💨 {weather.current.windSpeed} km/h</div>
+        <div className="bg-gradient-to-br from-violet-500/20 to-violet-600/20 backdrop-blur-md border border-violet-400/30 rounded-3xl shadow-2xl p-8">
+          <div className="text-center">
+            <div className="text-8xl mb-4">{weather.current.icon}</div>
+            <div className="text-7xl font-bold mb-2 text-violet-100">{weather.current.temperature}°C</div>
+            <div className="text-3xl text-gray-200 mb-6">{weather.current.description}</div>
+            <div className="h-px bg-gradient-to-r from-transparent via-violet-400/50 to-transparent my-4"></div>
+            <div className="flex gap-8 mt-6 text-xl justify-center">
+              <div className="bg-gray-700/50 backdrop-blur-sm border border-gray-600/50 rounded-xl px-4 py-2 text-gray-200">
+                💧 {weather.current.humidity}%
+              </div>
+              <div className="bg-gray-700/50 backdrop-blur-sm border border-gray-600/50 rounded-xl px-4 py-2 text-gray-200">
+                💨 {weather.current.windSpeed} km/h
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* 5-Day Forecast */}
       <div className="flex-1">
-        <h2 className="text-3xl font-semibold mb-6 text-center">5-Day Forecast</h2>
+        <h2 className="text-3xl font-semibold mb-6 text-center text-violet-200">5-Day Forecast</h2>
         <div className="grid grid-cols-5 gap-4">
           {weather.forecast.map((day, index) => (
-            <div key={index} className="text-center bg-white/10 rounded-lg p-4">
-              <div className="text-xl font-semibold mb-2">{day.day}</div>
+            <div key={index} className="bg-gradient-to-br from-gray-700/40 to-gray-800/40 backdrop-blur-sm border border-gray-600/30 rounded-2xl p-4 text-center hover:border-violet-400/50 transition-all duration-300">
+              <div className="text-xl font-semibold mb-2 text-violet-200">{day.day}</div>
               <div className="text-4xl mb-2">{day.icon}</div>
-              <div className="text-lg font-bold">{day.high}°</div>
-              <div className="text-sm opacity-75">{day.low}°</div>
-              <div className="text-sm mt-2 opacity-90">{day.description}</div>
+              <div className="text-lg font-bold text-gray-100">{day.high}°</div>
+              <div className="text-sm text-gray-400">{day.low}°</div>
+              <div className="h-px bg-gradient-to-r from-transparent via-gray-500/30 to-transparent my-2"></div>
+              <div className="text-sm mt-2 text-gray-300">{day.description}</div>
             </div>
           ))}
         </div>

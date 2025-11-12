@@ -143,8 +143,8 @@ const BusTimesScreen: React.FC = () => {
         const now = new Date();
         const fallbackDepartures: BusDeparture[] = [
           {
-            line: '8',
-            destination: 'Oud Overdie',
+            line: 'X',
+            destination: 'Geen Data',
             departureTime: new Date(now.getTime() + 5 * 60000).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' }),
             delay: 0,
             platform: 'B',
@@ -177,7 +177,7 @@ const BusTimesScreen: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full text-white">
-        <div className="text-4xl">Loading bus times...</div>
+        <div className="text-4xl animate-pulse text-violet-200">Loading bus times...</div>
       </div>
     );
   }
@@ -186,63 +186,65 @@ const BusTimesScreen: React.FC = () => {
     <div className="flex flex-col h-full text-white p-8">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-5xl font-bold mb-2">🚌 Bus Departures</h1>
-        <div className="text-2xl opacity-75">{config.transport.stopName}</div>
-        <div className="text-lg opacity-60 mt-2">
-          Last updated: {lastUpdated.toLocaleTimeString('nl-NL')}
+        <h1 className="text-5xl font-bold mb-2 text-violet-100">🚌 Vertrektijden</h1>
+        <div className="text-2xl text-gray-300">{config.transport.stopName}</div>
+        <div className="text-sm text-gray-400 mt-2">
+          Laatste update: {lastUpdated.toLocaleTimeString('nl-NL')}
         </div>
       </div>
 
       {/* Departures Table */}
       <div className="flex-1">
-        <div className="bg-white/10 rounded-lg overflow-hidden">
+        <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-md border border-gray-600/30 rounded-3xl overflow-hidden shadow-2xl">
           {/* Table Header */}
-          <div className="grid grid-cols-5 gap-4 p-4 bg-white/20 text-xl font-semibold">
-            <div>Line</div>
-            <div className="col-span-2">Destination</div>
-            <div>Time</div>
-            <div>Platform</div>
+          <div className="grid grid-cols-4 gap-4 p-4 bg-violet-600/20 border-b border-violet-400/30 text-2xl font-semibold text-violet-100">
+            <div>Lijn</div>
+            <div className="col-span-2">Bestemming</div>
+            <div>Tijd</div>
           </div>
-          
+
           {/* Departures */}
-          <div className="divide-y divide-white/20">
-            {departures.map((departure, index) => (
-              <div key={index} className="grid grid-cols-5 gap-4 p-4 text-lg hover:bg-white/5">
-                <div className="flex items-center">
-                  <span className="bg-blue-600 text-white px-3 py-1 rounded-full font-bold">
-                    {departure.line}
-                  </span>
-                </div>
-                <div className="col-span-2 flex items-center">
-                  {departure.destination}
-                </div>
-                <div className="flex items-center">
-                  <span className={departure.delay > 0 ? 'text-red-300' : 'text-green-300'}>
-                    {departure.departureTime}
-                    {departure.delay > 0 && (
-                      <span className="text-red-400 ml-2">+{departure.delay}m</span>
-                    )}
-                  </span>
-                  {departure.status === 'DRIVING' && (
-                    <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded">
-                      Onderweg
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center">
-                  <span className="bg-gray-600 text-white px-2 py-1 rounded">
-                    {departure.platform}
-                  </span>
-                </div>
+          <div className="divide-y divide-gray-700/50">
+            {departures.length === 0 ? (
+              <div className="p-8 text-center text-xl text-gray-400">
+                Geen busritten beschikbaar.
               </div>
-            ))}
+            ) : (
+              departures.map((departure, index) => (
+                <div key={index} className="grid grid-cols-4 gap-4 p-4 text-3xl hover:bg-violet-500/10 transition-all duration-200">
+                  <div className="flex items-center">
+                    <span className="bg-violet-600 text-white px-3 py-1 rounded-full font-bold shadow-lg">
+                      {departure.line}
+                    </span>
+                  </div>
+                  <div className="col-span-2 flex items-center text-gray-200">
+                    {departure.destination}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={departure.delay > 0 ? 'text-red-400 font-semibold' : 'text-green-400 font-semibold'}>
+                      {departure.departureTime}
+                    </span>
+                    {departure.delay > 0 && (
+                      <span className="bg-red-500/80 text-white text-md px-2 py-1 rounded-md">
+                        +{departure.delay}m
+                      </span>
+                    )}&nbsp;
+                    {departure.status === 'DRIVING' && (
+                      <span className="bg-violet-500/80 text-white text-md px-2 py-1 rounded-md">
+                        Onderweg
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <div className="text-center mt-6 text-lg opacity-75">
-        Real-time departures • Check platform displays for updates
+      <div className="text-center mt-6 text-lg text-gray-400">
+        Actuele bustijden • Controleer deze pagina voor updates!
       </div>
     </div>
   );
