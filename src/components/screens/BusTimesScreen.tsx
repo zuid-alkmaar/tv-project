@@ -46,7 +46,7 @@ const BusTimesScreen: React.FC = () => {
 
         try {
           // Strategy 1: Try nginx proxy (if configured on your server)
-          response = await fetch('/api/ovapi/stopareacode/amrasl/');
+          response = await fetch('/api/ovapi/stopareacode/amrrfl/');
           if (response.ok) {
             data = await response.json();
           } else {
@@ -56,7 +56,7 @@ const BusTimesScreen: React.FC = () => {
           console.log('Nginx proxy failed, trying direct API call...');
           try {
             // Strategy 2: Try direct API call
-            response = await fetch('https://v0.ovapi.nl/stopareacode/amrasl/', {
+            response = await fetch('https://v0.ovapi.nl/stopareacode/amrafl/', {
               mode: 'cors',
             });
             if (response.ok) {
@@ -68,7 +68,7 @@ const BusTimesScreen: React.FC = () => {
             console.log('Direct API call failed, trying CORS proxy...');
             try {
               // Strategy 3: Use CORS proxy service
-              response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://v0.ovapi.nl/stopareacode/amrasl/'));
+              response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://v0.ovapi.nl/stopareacode/amrrfl/'));
               if (response.ok) {
                 const proxyData = await response.json();
                 data = JSON.parse(proxyData.contents);
@@ -98,8 +98,11 @@ const BusTimesScreen: React.FC = () => {
                   const targetTime = new Date(pass.TargetDepartureTime);
                   const now = new Date();
 
-                  // Only show future departures
-                  if (expectedTime > now) {
+                  // Subtract 5 minutes from the expected time for display
+                  const adjustedTime = new Date(expectedTime.getTime() - (3 * 60 * 1000));
+
+                  // Only show future departures (using adjusted time)
+                  if (adjustedTime > now) {
                     // Calculate delay in minutes
                     const delayMs = expectedTime.getTime() - targetTime.getTime();
                     const delayMinutes = Math.round(delayMs / (1000 * 60));
@@ -110,7 +113,7 @@ const BusTimesScreen: React.FC = () => {
                     departures.push({
                       line: pass.LinePublicNumber,
                       destination: pass.DestinationName50,
-                      departureTime: expectedTime.toLocaleTimeString('nl-NL', {
+                      departureTime: adjustedTime.toLocaleTimeString('nl-NL', {
                         hour: '2-digit',
                         minute: '2-digit'
                       }),

@@ -19,10 +19,10 @@ export const config = {
   transport: {
     // Using OVapi for real-time Dutch public transport data
     // API endpoint for Asselijnstraat bus stop
-    apiUrl: 'https://v0.ovapi.nl/stopareacode/amrasl/',
-    stopName: 'Asselijnstraat',
+    apiUrl: 'https://v0.ovapi.nl/stopareacode/amrrfl/',
+    stopName: 'Buurthuis Overdie Ontmoet',
     // Filter destinations - only show these destinations
-    allowedDestinations: ['Oud Overdie', 'Alkmaar Station'],
+    allowedDestinations: ['Station Alkmaar', 'Overdie'],
     updateInterval: 30 * 1000, // 30 seconds
   },
 
